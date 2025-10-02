@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  REGISTRY: trialf20tqh.jfrog.io
+  REGISTRY: trialf20tqh.jfrog.io/docker-local
 
 jobs:
   docker-build:
@@ -31,7 +31,7 @@ jobs:
       id: meta-backend
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/docker/swissre-api
+        images: ${{ env.REGISTRY }}/swissre-api
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -41,7 +41,7 @@ jobs:
       id: meta-frontend
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/docker/swissre-streamlit
+        images: ${{ env.REGISTRY }}/swissre-streamlit
         tags: |
           type=ref,event=branch
           type=ref,event=pr
