@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: swissre-shippy-config
+data:
+  app.name: "swissre-microservice"
+  app.version: "1.0.0"
+  cluster.name: "charming-dance-dinosaur"
+  cluster.region: "us-east-1"
+  namespace: "is-mlops"
+  account.id: "596507587864"
+  
+  # Docker images
+  backend.image: "securian-docker-all.jfrog.io/swissre-api"
+  frontend.image: "securian-docker-all.jfrog.io/swissre-streamlit"
+  
+  # Service configuration
+  backend.port: "8080"
+  frontend.port: "8501"
+  
+  # IAM configuration
+  service.account: "swissre-service-account"
+  iam.role: "arn:aws:iam::596507587864:role/SFGAppSwissReServiceRole"

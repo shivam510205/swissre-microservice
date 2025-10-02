@@ -1,0 +1,44 @@
+[[source]]
+url = "https://securian.jfrog.io/artifactory/api/pypi/pypi-all/simple"
+verify_ssl = true
+name = "securian"
+
+[packages]
+fastapi = "==0.104.1"
+uvicorn = "==0.24.0"
+pydantic = "==2.5.0"
+boto3 = "==1.34.0"
+requests = "==2.31.0"
+streamlit = "==1.49.1"
+pandas = "==2.3.2"
+python-dotenv = "==1.0.0"
+python-multipart = "==0.0.6"
+aiohappyeyeballs = "==2.6.1"
+aiohttp = "==3.12.15"
+aiosignal = "==1.4.0"
+altair = "==5.5.0"
+annotated-types = "==0.7.0"
+anyio = "==4.10.0"
+asgiref = "==3.9.1"
+attrs = "==25.3.0"
+autopep8 = "==2.3.2"
+aws-opentelemetry-distro = "==0.10.1"
+aws-requests-auth = "==0.4.3"
+beautifulsoup4 = "==4.13.5"
+bedrock-agentcore = "==0.1.3"
+bedrock-agentcore-starter-toolkit = "==0.1.10"
+blinker = "==1.9.0"
+botocore = "==1.40.32"
+cachetools = "==5.2.0"
+certifi = "==2025.8.3"
+charset-normalizer = "==3.4.3"
+click = "==8.2.1"
+colorama = "==0.4.6"
+
+[dev-packages]
+pytest = "*"
+black = "*"
+flake8 = "*"
+
+[requires]
+python_version = "3.13"

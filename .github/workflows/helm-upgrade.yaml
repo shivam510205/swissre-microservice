@@ -1,0 +1,76 @@
+name: Helm Upgrade
+
+on:
+  workflow_run:
+    workflows: ["CI Docker Build"]
+    types: [completed]
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'nonprod'
+        type: choice
+        options:
+        - nonprod
+        - prod
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: charming-dance-dinosaur
+  NAMESPACE: is-mlops
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Setup kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.28.0'
+    
+    - name: Setup Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: '3.12.0'
+    
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+    
+    - name: Determine environment
+      id: env
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          ENV="${{ github.event.inputs.environment }}"
+        elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          ENV="prod"
+        else
+          ENV="nonprod"
+        fi
+        echo "environment=$ENV" >> $GITHUB_OUTPUT
+    
+    - name: Deploy with Helm
+      run: |
+        helm upgrade --install swissre-${{ steps.env.outputs.environment }} ./helm \
+          --namespace ${{ env.NAMESPACE }} \
+          --values ./helm/values-${{ steps.env.outputs.environment }}.yaml \
+          --wait \
+          --timeout 10m
+    
+    - name: Verify deployment
+      run: |
+        kubectl get pods -n ${{ env.NAMESPACE }} -l app.kubernetes.io/name=swissre-microservice

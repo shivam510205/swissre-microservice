@@ -1,0 +1,42 @@
+FROM securian-docker-all.jfrog.io/python:3.13-slim-bookworm
+
+WORKDIR /app
+
+# Setup certificates and system
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+ && rm -rf /var/lib/apt/lists/* \
+ # Create non-root user
+ && groupadd --gid 1001 swissre \
+ && useradd --comment "SwissRe user" \
+            --home-dir /app \
+            --gid 1001 \
+            --uid 1001 \
+            --shell /usr/sbin/nologin \
+            swissre
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy all application code
+COPY src/ ./src/
+
+# Create necessary directories and set permissions
+RUN mkdir -p /tmp /var/cache \
+ && chown -R 1001:1001 /app /tmp /var/cache
+
+# Switch to non-root user
+USER 1001
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+# Run application from src directory
+CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]

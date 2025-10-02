@@ -1,0 +1,11 @@
+apiVersion: v2
+name: swissre-microservice
+description: SwissRe Medical Summarization Microservice
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - swissre
+  - medical
+  - summarization
+  - microservice
