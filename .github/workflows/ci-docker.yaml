@@ -31,7 +31,7 @@ jobs:
       id: meta-backend
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/swissre-api
+        images: ${{ env.REGISTRY }}/docker/swissre-api
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -41,7 +41,7 @@ jobs:
       id: meta-frontend
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/swissre-streamlit
+        images: ${{ env.REGISTRY }}/docker/swissre-streamlit
         tags: |
           type=ref,event=branch
           type=ref,event=pr
