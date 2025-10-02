@@ -6,9 +6,9 @@ backend:
   replicaCount: 1
   
   image:
-    repository: trialf20tqh.jfrog.io/docker-local/swissre-api
-    tag: "develop-latest"
-    pullPolicy: IfNotPresent
+    repository: swissre-api
+    tag: "latest"
+    pullPolicy: Never
   
   service:
     type: ClusterIP
@@ -37,9 +37,9 @@ frontend:
   replicaCount: 1
   
   image:
-    repository: trialf20tqh.jfrog.io/docker-local/swissre-streamlit
-    tag: "develop-latest"
-    pullPolicy: IfNotPresent
+    repository: swissre-streamlit
+    tag: "latest"
+    pullPolicy: Never
   
   service:
     type: NodePort
