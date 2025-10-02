@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  REGISTRY: securian-docker-all.jfrog.io
+  REGISTRY: trialf20tqh.jfrog.io
 
 jobs:
   docker-build:

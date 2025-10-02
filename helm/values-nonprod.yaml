@@ -6,7 +6,7 @@ backend:
   replicaCount: 1
   
   image:
-    repository: securian-docker-all.jfrog.io/swissre-api
+    repository: trialf20tqh.jfrog.io/swissre-api
     tag: "develop-latest"
     pullPolicy: IfNotPresent
   
@@ -37,7 +37,7 @@ frontend:
   replicaCount: 1
   
   image:
-    repository: securian-docker-all.jfrog.io/swissre-streamlit
+    repository: trialf20tqh.jfrog.io/swissre-streamlit
     tag: "develop-latest"
     pullPolicy: IfNotPresent
   
