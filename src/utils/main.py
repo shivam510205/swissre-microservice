@@ -1,5 +1,10 @@
 import json
-from swiss_re.swiss_re import json_to_plain_string, add_prompt_to_text, fetch_summary, prompt
+from swiss_re.swiss_re import (
+    json_to_plain_string,
+    add_prompt_to_text,
+    fetch_summary,
+    prompt,
+)
 from database.database_connection import store_content_response
 
 if __name__ == "__main__":

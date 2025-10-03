@@ -19,9 +19,7 @@ from typing import Optional
 
 
 def store_content_response(
-    json_data: str,
-    table_name: str,
-    region: str = "us-east-1"
+    json_data: str, table_name: str, region: str = "us-east-1"
 ) -> Optional[str]:
     """
     Parse a JSON string representing content response data and store it in DynamoDB.

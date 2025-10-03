@@ -20,6 +20,7 @@ current_year = datetime.datetime.now().year
 # ---------------- Swiss Re API Token -----------------
 # TOKEN is imported from config.py
 
+
 # ---------------- JSON to String -----------------
 def json_to_plain_string(json_file_path) -> str:
     """
@@ -37,11 +38,11 @@ def json_to_plain_string(json_file_path) -> str:
         data = json.load(f)
 
     def clean_string(s: str) -> str:
-        """ Clean and normalize JSON string values. """
-        s = s.replace('\"', '"').replace("\'", "'")
-        s = re.sub(r'(?<!\\)"', '', s)
-        s = re.sub(r'\r?\n', ' ', s)
-        s = re.sub(r'\s+', ' ', s)
+        """Clean and normalize JSON string values."""
+        s = s.replace('"', '"').replace("'", "'")
+        s = re.sub(r'(?<!\\)"', "", s)
+        s = re.sub(r"\r?\n", " ", s)
+        s = re.sub(r"\s+", " ", s)
         return s.strip()
 
     def recurse(obj):
@@ -67,28 +68,30 @@ def json_to_plain_string(json_file_path) -> str:
         parts.pop()
     return " ".join(parts)
 
+
 # ---------------- Add Prompt -----------------
 def add_prompt_to_text(plain_text: str, prompt: str) -> str:
-    """ Combine the user prompt and the plain text string into one summary string. """
+    """Combine the user prompt and the plain text string into one summary string."""
     combined = prompt.strip() + "\n\n" + plain_text.strip()
     return combined
 
+
 # ---------------- SwissRe API Summary Fetch -----------------
 def fetch_summary(summary_text: str) -> dict:
-    """ Sends a summary text to the SwissRe API summary endpoint and prints the JSON response. """
+    """Sends a summary text to the SwissRe API summary endpoint and prints the JSON response."""
     url = "https://lifeguide-rest-genai.api-mp.swissre.com/summary"
     headers = {
         "Authorization": f"Bearer {TOKEN}",
         "Content-Type": "application/json",
         "X-sr-auth-user": "Securian",
-        "session-id": "123456"
+        "session-id": "123456",
     }
     payload = {
         "product_type": ["life1"],
         "summary": summary_text,
         "contentType": "info",
         "language": "en-eu",
-        "ratingType": "adult"
+        "ratingType": "adult",
     }
 
     try:
@@ -103,6 +106,7 @@ def fetch_summary(summary_text: str) -> dict:
         print("Response content is not valid JSON")
         data = {}
     return data
+
 
 # ---------------- Prompt to be used -----------------
 prompt = """

@@ -17,15 +17,17 @@ import pandas as pd
 import streamlit as st
 
 # ---------------- Page setup ----------------
-st.set_page_config(page_title="Text/JSON ➜ PNG Logos (auto)", page_icon="🧩", layout="centered")
+st.set_page_config(
+    page_title="Text/JSON ➜ PNG Logos (auto)", page_icon="🧩", layout="centered"
+)
 st.title("SwissRE Output Viewer")
 
 # ---------------- Theme (same colors as before; tweak here if needed) ----------------
-PRIMARY     = "#80A651"   # brand green (headers/buttons)
-ACCENT      = "#B0D46F"   # light green (accents)
-BG_TINT     = "#F1F4F4"   # tinted section background
-BD_COL      = "#DDDDDD"   # soft border
-ANSWER_COLOR= "#000000"   # bright text color for the Answer box
+PRIMARY = "#80A651"  # brand green (headers/buttons)
+ACCENT = "#B0D46F"  # light green (accents)
+BG_TINT = "#F1F4F4"  # tinted section background
+BD_COL = "#DDDDDD"  # soft border
+ANSWER_COLOR = "#000000"  # bright text color for the Answer box
 
 st.markdown(
     f"""
@@ -86,6 +88,7 @@ st.markdown(
 
 st.markdown('<div class="bg-overlay"></div>', unsafe_allow_html=True)
 
+
 # ---------------- Helpers ----------------
 @st.cache_data(show_spinner=False)
 def _decode_bytes(b: bytes) -> str:
@@ -96,6 +99,7 @@ def _decode_bytes(b: bytes) -> str:
             pass
     return b.decode("utf-8", errors="replace")
 
+
 @st.cache_data(show_spinner=False)
 def _read_local_text(path: str) -> str:
     p = (pathlib.Path(__file__).parent / path).resolve()
@@ -105,6 +109,7 @@ def _read_local_text(path: str) -> str:
         raise IsADirectoryError(f"Path is a directory: {p}")
     return _decode_bytes(p.read_bytes())
 
+
 @st.cache_data(show_spinner=False)
 def _read_local_bytes(path: str) -> bytes:
     p = (pathlib.Path(__file__).parent / path).resolve()
@@ -113,6 +118,7 @@ def _read_local_bytes(path: str) -> bytes:
     if p.is_dir():
         raise IsADirectoryError(f"Path is a directory: {p}")
     return p.read_bytes()
+
 
 def set_page_bg(img_bytes: bytes, opacity: float = 0.12, size: str = "60%min") -> None:
     b64 = base64.b64encode(img_bytes).decode()
@@ -129,9 +135,10 @@ def set_page_bg(img_bytes: bytes, opacity: float = 0.12, size: str = "60%min") -
         unsafe_allow_html=True,
     )
 
+
 # ---------------- Logos (auto) ----------------
 # Expecting the two images to live alongside the app (same folder)
-LEFT_LOGO_PATH  = "securian.png"
+LEFT_LOGO_PATH = "securian.png"
 RIGHT_LOGO_PATH = "securian_.png"
 
 try:
@@ -165,7 +172,9 @@ for candidate in CANDIDATE_JSON_PATHS:
         last_err = e
 
 if text is None:
-    st.error(f"Couldn't read an api_response.json near the app. Last error: {{type(last_err).__name__}}: {{last_err}}")
+    st.error(
+        f"Couldn't read an api_response.json near the app. Last error: {{type(last_err).__name__}}: {{last_err}}"
+    )
     st.stop()
 
 # ---------------- Parse JSON; if invalid, show a friendly error ----------------
@@ -185,9 +194,14 @@ if isinstance(obj, dict):
 
     st.markdown('<div class="answer-card">', unsafe_allow_html=True)
     if answer_html:
-        st.markdown(f'<div class="answer-box">{answer_html}</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="answer-box">{answer_html}</div>', unsafe_allow_html=True
+        )
     else:
-        st.markdown(f'<div class="answer-box">{answer_plain_escaped}</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="answer-box">{answer_plain_escaped}</div>',
+            unsafe_allow_html=True,
+        )
     st.markdown("</div>", unsafe_allow_html=True)
 
     # ---- References (Ref #, Label, Link only) ----
@@ -196,11 +210,13 @@ if isinstance(obj, dict):
     if isinstance(refs, list) and refs:
         for r in refs:
             if isinstance(r, dict):
-                rows.append({
-                    "Ref #": r.get("referenceNumber"),
-                    "Label": r.get("label") or r.get("externalURL") or "",
-                    "Link": r.get("externalURL")
-                })
+                rows.append(
+                    {
+                        "Ref #": r.get("referenceNumber"),
+                        "Label": r.get("label") or r.get("externalURL") or "",
+                        "Link": r.get("externalURL"),
+                    }
+                )
 
     if rows:
         df = pd.DataFrame(rows, columns=["Ref #", "Label", "Link"])
@@ -221,4 +237,6 @@ if isinstance(obj, dict):
             st.dataframe(df, use_container_width=True, hide_index=True)
         st.markdown("</div>", unsafe_allow_html=True)
 else:
-    st.error("Top-level JSON is not an object. Expected keys like 'answer' and 'references'.")
+    st.error(
+        "Top-level JSON is not an object. Expected keys like 'answer' and 'references'."
+    )
