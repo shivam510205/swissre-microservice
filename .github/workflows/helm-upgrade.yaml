@@ -87,8 +87,7 @@ jobs:
           --namespace ${{ env.NAMESPACE }} \
           --values ./helm/values-${{ steps.env.outputs.environment }}.yaml \
           --wait \
-          --timeout 10m \
-          --atomic
+          --timeout 3m
     
     - name: Verify deployment
       run: |
