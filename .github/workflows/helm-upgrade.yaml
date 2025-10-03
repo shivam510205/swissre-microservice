@@ -63,6 +63,15 @@ jobs:
         fi
         echo "environment=$ENV" >> $GITHUB_OUTPUT
     
+    - name: Create JFrog image pull secret
+      run: |
+        kubectl create secret docker-registry jfrog-secret \
+          --docker-server=trialf20tqh.jfrog.io \
+          --docker-username="${{ secrets.JFROG_USERNAME }}" \
+          --docker-password="${{ secrets.JFROG_PASSWORD }}" \
+          --namespace=${{ env.NAMESPACE }} \
+          --dry-run=client -o yaml | kubectl apply -f -
+    
     - name: Deploy with Helm
       run: |
         # Check if release is stuck and rollback if needed
