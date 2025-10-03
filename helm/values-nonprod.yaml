@@ -6,8 +6,8 @@ backend:
   replicaCount: 1
   
   image:
-    repository: trialf20tqh.jfrog.io/docker-trial/swissre-api
-    tag: "latest"
+    repository: python
+    tag: "3.11-slim"
     pullPolicy: IfNotPresent
   
   service:
@@ -18,18 +18,16 @@ backend:
   resources:
     limits:
       cpu: 1000m
-      memory: 2Gi
+      memory: 1Gi
     requests:
       cpu: 500m
-      memory: 1Gi
+      memory: 512Mi
   
   env:
-    - name: AWS_REGION
-      value: "us-east-1"
-    - name: SWISSRE_SECRET_NAME
-      value: "swissre/api-token"
+    - name: ENVIRONMENT
+      value: "nonprod"
     - name: LOG_LEVEL
-      value: "DEBUG"
+      value: "INFO"
 
 # Frontend configuration
 frontend:
@@ -37,45 +35,48 @@ frontend:
   replicaCount: 1
   
   image:
-    repository: trialf20tqh.jfrog.io/docker-trial/swissre-streamlit
-    tag: "latest"
+    repository: python
+    tag: "3.11-slim"
     pullPolicy: IfNotPresent
   
   service:
-    type: NodePort
+    type: ClusterIP
     port: 8501
     targetPort: 8501
   
   resources:
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 512Mi
     requests:
       cpu: 250m
-      memory: 512Mi
+      memory: 256Mi
   
   env:
-    - name: SWISSRE_API_URL
-      value: "http://swissre-nonprod-backend:8080"
+    - name: ENVIRONMENT
+      value: "nonprod"
+    - name: BACKEND_URL
+      value: "http://swissre-nonprod-swissre-microservice-backend:8080"
 
 # Service Account
 serviceAccount:
   create: true
   annotations:
-    eks.amazonaws.com/role-arn: "arn:aws:iam::352635226587:role/SFGAppSwissReServiceRole"
+    eks.amazonaws.com/role-arn: arn:aws:iam::352635226587:role/AgenticAIServiceRole
   name: "swissre-service-account"
 
 # Security Context
 podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 1001
-  fsGroup: 1001
+  fsGroup: 2000
 
 securityContext:
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1001
   capabilities:
     drop:
     - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Ingress
+ingress:
+  enabled: false

@@ -29,6 +29,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          command: ["python", "-c", "import time; time.sleep(3600)"]
           ports:
             - name: http
               containerPort: 8080
@@ -91,6 +92,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          command: ["python", "-c", "import time; time.sleep(3600)"]
           ports:
             - name: http
               containerPort: 8501

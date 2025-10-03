@@ -74,14 +74,15 @@ jobs:
     
     - name: Deploy with Helm
       run: |
-        # Check if release is stuck and rollback if needed
-        if helm status swissre-${{ steps.env.outputs.environment }} -n ${{ env.NAMESPACE }} 2>/dev/null | grep -q "pending-upgrade\|pending-install"; then
-          echo "Release is stuck, attempting rollback..."
-          helm rollback swissre-${{ steps.env.outputs.environment }} -n ${{ env.NAMESPACE }} || true
-          sleep 10
+        # Check if release exists and is stuck
+        if helm status swissre-${{ steps.env.outputs.environment }} -n ${{ env.NAMESPACE }} 2>/dev/null | grep -q "pending-upgrade\|pending-install\|failed"; then
+          echo "Release is stuck or failed, deleting and reinstalling..."
+          helm delete swissre-${{ steps.env.outputs.environment }} -n ${{ env.NAMESPACE }} || true
+          kubectl delete all -n ${{ env.NAMESPACE }} -l app.kubernetes.io/name=swissre-microservice || true
+          sleep 5
         fi
         
-        # Deploy with atomic flag for automatic rollback on failure
+        # Fresh install or upgrade
         helm upgrade --install swissre-${{ steps.env.outputs.environment }} ./helm \
           --namespace ${{ env.NAMESPACE }} \
           --values ./helm/values-${{ steps.env.outputs.environment }}.yaml \
