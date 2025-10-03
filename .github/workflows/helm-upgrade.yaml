@@ -65,11 +65,20 @@ jobs:
     
     - name: Deploy with Helm
       run: |
+        # Check if release is stuck and rollback if needed
+        if helm status swissre-${{ steps.env.outputs.environment }} -n ${{ env.NAMESPACE }} 2>/dev/null | grep -q "pending-upgrade\|pending-install"; then
+          echo "Release is stuck, attempting rollback..."
+          helm rollback swissre-${{ steps.env.outputs.environment }} -n ${{ env.NAMESPACE }} || true
+          sleep 10
+        fi
+        
+        # Deploy with atomic flag for automatic rollback on failure
         helm upgrade --install swissre-${{ steps.env.outputs.environment }} ./helm \
           --namespace ${{ env.NAMESPACE }} \
           --values ./helm/values-${{ steps.env.outputs.environment }}.yaml \
           --wait \
-          --timeout 10m
+          --timeout 10m \
+          --atomic
     
     - name: Verify deployment
       run: |
